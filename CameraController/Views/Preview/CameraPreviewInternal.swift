@@ -9,12 +9,25 @@
 import Foundation
 import Cocoa
 import AVFoundation
+import CoreImage
 
 final class CameraPreviewInternal: NSView {
     var captureDevice: AVCaptureDevice?
     private var captureSession: AVCaptureSession
     private var previewLayer: AVCaptureVideoPreviewLayer!
     private var captureInput: AVCaptureInput?
+    
+    // Crop pipeline components
+    private var videoOutput: AVCaptureVideoDataOutput?
+    private var cropProcessor: CropFrameProcessor?
+    private var croppedRenderer: CroppedFrameRenderer?
+    private(set) var lastCroppedFrame: CIImage?
+    
+    var cropState: CropState? {
+        didSet {
+            configureCropPipeline()
+        }
+    }
 
     init(frame frameRect: NSRect, device: AVCaptureDevice?) {
         captureDevice = device
@@ -69,6 +82,7 @@ final class CameraPreviewInternal: NSView {
         super.layout()
         previewLayer.frame = bounds
         layer?.addSublayer(previewLayer)
+        croppedRenderer?.metalLayer.frame = bounds
     }
 
     func stopRunning() {
@@ -130,6 +144,92 @@ final class CameraPreviewInternal: NSView {
         if !captureSession.isRunning {
             captureSession.startRunning()
         }
+    }
+    
+    // MARK: - Crop Pipeline
+    
+    private func configureCropPipeline() {
+        guard let cropState = cropState else {
+            teardownCropPipeline()
+            return
+        }
+        
+        // Only set up once
+        guard videoOutput == nil else {
+            updateLayerVisibility()
+            return
+        }
+        
+        // Create video data output
+        let output = AVCaptureVideoDataOutput()
+        output.videoSettings = [
+            kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
+        ]
+        output.alwaysDiscardsLateVideoFrames = true
+        
+        // Create crop processor
+        let processor = CropFrameProcessor(cropState: cropState)
+        
+        // Set delegate on dedicated queue
+        let queue = DispatchQueue(label: "com.itaysoft.CameraController.cropQueue", qos: .userInteractive)
+        output.setSampleBufferDelegate(processor, queue: queue)
+        
+        // Add output to session
+        captureSession.beginConfiguration()
+        if captureSession.canAddOutput(output) {
+            captureSession.addOutput(output)
+        }
+        captureSession.commitConfiguration()
+        
+        // Create Metal renderer
+        guard let renderer = CroppedFrameRenderer() else {
+            // Metal unavailable, teardown
+            teardownCropPipeline()
+            return
+        }
+        
+        // Add metal layer
+        renderer.metalLayer.frame = bounds
+        layer?.addSublayer(renderer.metalLayer)
+        
+        // Wire up callback
+        processor.onProcessedFrame = { [weak self] image, size in
+            DispatchQueue.main.async {
+                self?.lastCroppedFrame = image
+                renderer.render(image, outputSize: size)
+                self?.updateLayerVisibility()
+            }
+        }
+        
+        self.videoOutput = output
+        self.cropProcessor = processor
+        self.croppedRenderer = renderer
+        
+        updateLayerVisibility()
+    }
+    
+    private func teardownCropPipeline() {
+        if let output = videoOutput {
+            captureSession.beginConfiguration()
+            captureSession.removeOutput(output)
+            captureSession.commitConfiguration()
+        }
+        
+        croppedRenderer?.metalLayer.removeFromSuperlayer()
+        
+        videoOutput = nil
+        cropProcessor = nil
+        croppedRenderer = nil
+        lastCroppedFrame = nil
+        
+        previewLayer.isHidden = false
+    }
+    
+    private func updateLayerVisibility() {
+        let shouldUseCrop = cropState?.isEnabled == true && !(cropState?.cropRect.isFull ?? true)
+        
+        previewLayer.isHidden = shouldUseCrop
+        croppedRenderer?.metalLayer.isHidden = !shouldUseCrop
     }
 }
 

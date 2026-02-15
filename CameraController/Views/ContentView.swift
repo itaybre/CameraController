@@ -14,7 +14,14 @@ struct ContentView: View {
     @ObservedObject var manager = DevicesManager.shared
     @ObservedObject var settings = UserSettings.shared
     @State var currentSection: Int?
-
+    
+    var currentCropState: CropState {
+        if let deviceID = manager.selectedDevice?.avDevice?.uniqueID {
+            return CropStateManager.shared.cropState(for: deviceID)
+        }
+        return CropState(deviceID: "none")
+    }
+    
     var body: some View {
         HStack {
             VStack(spacing: 0) {
@@ -46,7 +53,7 @@ struct ContentView: View {
         if settings.hideCameraPreview {
             EmptyView()
         } else if $manager.selectedDevice.wrappedValue != nil {
-            CameraPreview(captureDevice: $manager.selectedDevice)
+            CameraPreview(captureDevice: $manager.selectedDevice, cropState: currentCropState)
                 .frame(
                     width: settings.cameraPreviewSize.getWidth(),
                     height: settings.cameraPreviewSize.getHeight()
@@ -66,7 +73,8 @@ struct ContentView: View {
     func settingsView() -> some View {
         SettingsView(
             captureDevice: $manager.selectedDevice,
-            currentSection: $currentSection
+            currentSection: $currentSection,
+            cropState: currentCropState
         )
     }
 }

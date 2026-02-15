@@ -11,7 +11,8 @@ import SwiftUI
 struct SettingsView: View {
     @Binding var captureDevice: CaptureDevice?
     @Binding var currentSection: Int?
-
+    @ObservedObject var cropState: CropState
+    
     var body: some View {
         contentView()
             .frame(maxWidth: .infinity)
@@ -46,7 +47,8 @@ struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         SettingsView(
             captureDevice: .constant(nil),
-            currentSection: .constant(nil)
+            currentSection: .constant(nil),
+            cropState: CropState(deviceID: "preview")
         )
     }
 }
