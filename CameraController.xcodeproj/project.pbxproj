@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E609236DA95941C68357DC7C /* CropStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB965BC529947D098529825 /* CropStateTests.swift */; };
 		42E1D2CB78C745FD82DD2B4D /* CropState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8601BA2183BC404195E55B9B /* CropState.swift */; };
 		C9EBB59564D6436D9E70E4FB /* CropFrameProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348EE08754A14498B44D71D5 /* CropFrameProcessor.swift */; };
 		ACAE09A704AC423593DBD0EE /* CroppedFrameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0C558E9CC74919944C89BE /* CroppedFrameRenderer.swift */; };
@@ -160,6 +161,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7AB965BC529947D098529825 /* CropStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropStateTests.swift; sourceTree = "<group>"; };
 		8601BA2183BC404195E55B9B /* CropState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropState.swift; sourceTree = "<group>"; };
 		348EE08754A14498B44D71D5 /* CropFrameProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropFrameProcessor.swift; sourceTree = "<group>"; };
 		6A0C558E9CC74919944C89BE /* CroppedFrameRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CroppedFrameRenderer.swift; sourceTree = "<group>"; };
@@ -427,7 +429,8 @@
 				F47D07DC24C4104600E44A22 /* CameraControllerTests.xctest */,
 				F4D4C6E124CBE7A000581E05 /* Helper.app */,
 				F4508ACC2A43E477003C44F1 /* UVC.framework */,
-			);
+			
+				7AB965BC529947D098529825 /* CropStateTests.swift */,);
 			name = Products;
 			sourceTree = "<group>";
 		};
@@ -976,7 +979,8 @@ sourceTree = "<group>";
 			files = (
 				F47D080A24C50E1C00E44A22 /* StringTests.swift in Sources */,
 				F47D07F424C412F800E44A22 /* DevicesManagerTests.swift in Sources */,
-			);
+			
+				E609236DA95941C68357DC7C /* CropStateTests.swift in Sources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F4D4C6DD24CBE7A000581E05 /* Sources */ = {
