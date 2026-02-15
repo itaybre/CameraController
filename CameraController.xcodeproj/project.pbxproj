@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		42E1D2CB78C745FD82DD2B4D /* CropState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8601BA2183BC404195E55B9B /* CropState.swift */; };
+		C9EBB59564D6436D9E70E4FB /* CropFrameProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 348EE08754A14498B44D71D5 /* CropFrameProcessor.swift */; };
+		ACAE09A704AC423593DBD0EE /* CroppedFrameRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0C558E9CC74919944C89BE /* CroppedFrameRenderer.swift */; };
+		F7BEDBD7090D448E8F587FE4 /* CropStateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37538EBD6ED84E13BA88B825 /* CropStateManager.swift */; };
 		F42460312A5A104F009108C2 /* Toggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42460302A5A104F009108C2 /* Toggle.swift */; };
 		F42460332A5A299B009108C2 /* GenericControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42460322A5A299B009108C2 /* GenericControl.swift */; };
 		F42460352A5A65A0009108C2 /* BrightnessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42460342A5A65A0009108C2 /* BrightnessView.swift */; };
@@ -156,6 +160,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8601BA2183BC404195E55B9B /* CropState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropState.swift; sourceTree = "<group>"; };
+		348EE08754A14498B44D71D5 /* CropFrameProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropFrameProcessor.swift; sourceTree = "<group>"; };
+		6A0C558E9CC74919944C89BE /* CroppedFrameRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CroppedFrameRenderer.swift; sourceTree = "<group>"; };
+		37538EBD6ED84E13BA88B825 /* CropStateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CropStateManager.swift; sourceTree = "<group>"; };
 		F42460302A5A104F009108C2 /* Toggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toggle.swift; sourceTree = "<group>"; };
 		F42460322A5A299B009108C2 /* GenericControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericControl.swift; sourceTree = "<group>"; };
 		F42460342A5A65A0009108C2 /* BrightnessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrightnessView.swift; sourceTree = "<group>"; };
@@ -395,6 +403,7 @@
 				F42D42D527A0E3D500107DFF /* StatusBarManager.swift */,
 				F42D42D727A0E92100107DFF /* WindowManager.swift */,
 				F469CF4624DD0D9F0092C7F9 /* ProfileManager.swift */,
+				37538EBD6ED84E13BA88B825 /* CropStateManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -434,6 +443,7 @@
 				F47D07EB24C4117A00E44A22 /* Views */,
 				F47D07D024C4104600E44A22 /* Preview Content */,
 				F42D42D927A0F0B200107DFF /* Vendored */,
+				1A2B3C4D5E6F708192A3B4C5 /* Crop */,
 			);
 			path = CameraController;
 			sourceTree = "<group>";
@@ -650,6 +660,16 @@
 			path = Properties;
 			sourceTree = "<group>";
 		};
+1A2B3C4D5E6F708192A3B4C5 /* Crop */ = {
+isa = PBXGroup;
+children = (
+8601BA2183BC404195E55B9B /* CropState.swift */,
+348EE08754A14498B44D71D5 /* CropFrameProcessor.swift */,
+6A0C558E9CC74919944C89BE /* CroppedFrameRenderer.swift */,
+);
+path = Crop;
+sourceTree = "<group>";
+};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -878,6 +898,10 @@
 				F4508AEB2A43E4D7003C44F1 /* CameraInformation.swift in Sources */,
 				F4508AEA2A43E4D3003C44F1 /* USBDevice.swift in Sources */,
 				F4508AE72A43E4C5003C44F1 /* UVCDeviceProperties.swift in Sources */,
+				42E1D2CB78C745FD82DD2B4D /* CropState.swift in Sources */,
+				C9EBB59564D6436D9E70E4FB /* CropFrameProcessor.swift in Sources */,
+				ACAE09A704AC423593DBD0EE /* CroppedFrameRenderer.swift in Sources */,
+				F7BEDBD7090D448E8F587FE4 /* CropStateManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
