@@ -9,6 +9,7 @@
 import Foundation
 import Cocoa
 import AVFoundation
+import CoreImage
 
 final class CameraPreviewInternal: NSView {
     var captureDevice: AVCaptureDevice?
