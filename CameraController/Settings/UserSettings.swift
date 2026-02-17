@@ -15,7 +15,7 @@ final class UserSettings: ObservableObject {
 
     @Published var openAtLogin: Bool {
         didSet {
-            let success = SMLoginItemSetEnabled("com.itaysoft.CameraController.Helper" as CFString, openAtLogin)
+            let success = SMLoginItemSetEnabled("com.dweebzxx.CameraController.Helper" as CFString, openAtLogin)
             if success {
                 UserDefaults.standard.set(openAtLogin, forKey: "login")
             }

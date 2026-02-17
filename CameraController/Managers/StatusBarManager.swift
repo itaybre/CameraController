@@ -34,10 +34,12 @@ class StatusBarManager {
 
     @objc
     func showCustomView() {
+        print("🔵 [StatusBarManager] showCustomView() called")
         guard let button = statusBarItem?.button else {
+            print("🔴 [StatusBarManager] ERROR: statusBarItem.button is nil")
             return
         }
-
+        print("🔵 [StatusBarManager] button exists, calling WindowManager")
         WindowManager.shared.toggleShowWindow(from: button)
     }
 }

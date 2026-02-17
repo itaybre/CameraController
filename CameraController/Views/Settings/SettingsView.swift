@@ -11,6 +11,7 @@ import SwiftUI
 struct SettingsView: View {
     @Binding var captureDevice: CaptureDevice?
     @Binding var currentSection: Int?
+    @ObservedObject var cropState: CropState
 
     var body: some View {
         contentView()

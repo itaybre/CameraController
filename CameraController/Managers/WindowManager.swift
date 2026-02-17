@@ -17,6 +17,7 @@ class WindowManager: NSObject {
     private var isShowing: Bool = false
 
     func toggleShowWindow(from button: NSButton) {
+        print("🔵 [WindowManager] toggleShowWindow called, isShowing: \(isShowing)")
         if isShowing {
             closeWindow()
         } else {
@@ -25,9 +26,11 @@ class WindowManager: NSObject {
     }
 
     func showWindow(from button: NSButton) {
+        print("🔵 [WindowManager] showWindow() called")
         NotificationCenter.default.post(name: .windowOpen, object: nil)
 
         let contentView = ContentView()
+        print("🔵 [WindowManager] ContentView created")
 
         popover = NSPopover()
         popover?.contentViewController = NSHostingController(rootView: contentView)
@@ -35,15 +38,25 @@ class WindowManager: NSObject {
         popover?.contentSize.height = 100
         popover?.behavior = .transient
         popover?.delegate = self
+
+        print("🔵 [WindowManager] NSPopover configured, about to show...")
+        print("🔵 [WindowManager]   - button.bounds: \(button.bounds)")
+        print("🔵 [WindowManager]   - popover.contentSize: \(popover?.contentSize ?? .zero)")
+
         DispatchQueue.main.async { [weak self] in
+            print("🔵 [WindowManager] Inside main.async before show")
             self?.popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+            print("🔵 [WindowManager] popover.show() called")
             self?.popover?.contentViewController?.view.window?.makeKey()
+            print("🔵 [WindowManager] makeKey() called, isShowing = true")
         }
 
         isShowing = true
+        print("🔵 [WindowManager] showWindow() complete")
     }
 
     func closeWindow() {
+        print("🔵 [WindowManager] closeWindow() called")
         isShowing = false
 
         popover?.performClose(nil)

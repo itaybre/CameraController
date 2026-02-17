@@ -10,7 +10,7 @@ import Cocoa
 import SwiftUI
 
 enum HelperConstants {
-    static let BundleIdentifier = "com.itaysoft.CameraController"
+    static let BundleIdentifier = "com.dweebzxx.CameraController"
 }
 
 @NSApplicationMain
