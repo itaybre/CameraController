@@ -38,7 +38,7 @@ public class UVCControl {
                                       length: length,
                                       requestType: requestType)
         } catch {
-            // Should not return 0, but working on improving this
+            print("Unable to read UVC control \(uvcSelector): \(error)")
             return 0
         }
     }
@@ -53,6 +53,7 @@ public class UVCControl {
                                    value: value)
             return true
         } catch {
+            print("Unable to write UVC control \(uvcSelector): \(error)")
             return false
         }
     }
@@ -67,6 +68,12 @@ public class UVCControl {
                                 value: Int = 0) throws -> Int {
         guard uvcUnit >= 0 else {
             throw UVCError.invalidUnitId
+        }
+        guard uvcInterface >= 0 else {
+            throw UVCError.invalidInterfaceId
+        }
+        guard length > 0, length <= MemoryLayout<Int>.size else {
+            throw UVCError.invalidRequestLength
         }
 
         var value = value

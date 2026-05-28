@@ -52,19 +52,20 @@ final class NumberCaptureDeviceProperty: SliderCapableProperty, ObservableObject
         maximum = Float(control.maximum)
         resolution = Float(control.resolution)
         defaultValue = Float(control.defaultValue)
-        sliderValue = Float(control.current)
+        internalValue = Float(control.current)
     }
 
     func reset() {
         control.current = control.defaultValue
+        internalValue = Float(control.defaultValue)
     }
 
     func update() {
         let newValue = control.getCurrent()
-        sliderValue = Float(newValue)
+        internalValue = Float(newValue)
     }
 
     func write() {
-        sliderValue = Float(control.current)
+        control.current = Int(internalValue)
     }
 }

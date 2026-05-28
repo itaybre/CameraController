@@ -12,12 +12,24 @@ import IOKit.usb
 
 extension AVCaptureDevice {
 
-    private func getIOService() throws -> io_service_t {
-        var camera: io_service_t = 0
+    private var ioMainPort: mach_port_t {
+        if #available(macOS 12.0, *) {
+            return kIOMainPortDefault
+        } else {
+            return kIOMasterPortDefault
+        }
+    }
+
+    private func usbMatchingDictionary() throws -> NSMutableDictionary {
         let cameraInformation = try self.modelID.extractCameraInformation()
         let dictionary: NSMutableDictionary = IOServiceMatching("IOUSBDevice") as NSMutableDictionary
         dictionary["idVendor"] = cameraInformation.vendorId
         dictionary["idProduct"] = cameraInformation.productId
+        return dictionary
+    }
+
+    private func getIOService() throws -> io_service_t {
+        var camera: io_service_t = 0
 
         // adding other keys to this dictionary like kUSBProductString, kUSBVendorString, etc don't
         // seem to have any affect on using IOServiceGetMatchingService to get the correct camera,
@@ -25,7 +37,12 @@ extension AVCaptureDevice {
         // and fetch their property dicts and then match against the more specific values
 
         var iter: io_iterator_t = 0
-        if IOServiceGetMatchingServices(kIOMasterPortDefault, dictionary, &iter) == kIOReturnSuccess {
+        if IOServiceGetMatchingServices(ioMainPort, try usbMatchingDictionary(), &iter) == kIOReturnSuccess {
+            defer {
+                if iter != 0 {
+                    IOObjectRelease(iter)
+                }
+            }
             var cameraCandidate: io_service_t
             cameraCandidate = IOIteratorNext(iter)
             while cameraCandidate != 0 {
@@ -53,13 +70,18 @@ extension AVCaptureDevice {
                         }
                     }
                 }
+                IOObjectRelease(cameraCandidate)
                 cameraCandidate = IOIteratorNext(iter)
             }
         }
 
         // if we haven't found a camera after looping through the iterator, fallback on GetMatchingService method
         if camera == 0 {
-            camera = IOServiceGetMatchingService(kIOMasterPortDefault, dictionary)
+            camera = IOServiceGetMatchingService(ioMainPort, try usbMatchingDictionary())
+        }
+
+        guard camera != 0 else {
+            throw UVCError.noMatchingDevice
         }
 
         return camera
@@ -69,8 +91,7 @@ extension AVCaptureDevice {
 
         let camera = try self.getIOService()
         defer {
-            let code: kern_return_t = IOObjectRelease(camera)
-            assert( code == kIOReturnSuccess )
+            IOObjectRelease(camera)
         }
         var interfaceRef: UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceInterface190>>?
         var configDesc: IOUSBConfigurationDescriptorPtr?
@@ -92,6 +113,9 @@ extension AVCaptureDevice {
                 print("unable to get number of configurations")
                 return
             }
+            guard numConfig > 0 else {
+                return
+            }
 
             returnCode = deviceInterface.pointee.pointee.GetConfigurationDescriptorPtr(deviceInterface, 0, &configDesc)
             if returnCode != kIOReturnSuccess {
@@ -99,11 +123,16 @@ extension AVCaptureDevice {
                 return
             }
         }
-        guard interfaceRef != nil else { throw NSError(domain: #function, code: #line, userInfo: nil) }
+        guard let interface = interfaceRef else {
+            throw UVCError.controlInterfaceUnavailable
+        }
+        guard let configDesc = configDesc else {
+            throw UVCError.configurationDescriptorUnavailable
+        }
 
-        let descriptor = configDesc!.proccessDescriptor()
+        let descriptor = configDesc.proccessDescriptor()
 
-        return USBDevice(interface: interfaceRef.unsafelyUnwrapped,
+        return USBDevice(interface: interface,
                          descriptor: descriptor)
     }
 }

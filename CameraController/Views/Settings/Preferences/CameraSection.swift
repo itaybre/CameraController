@@ -22,11 +22,21 @@ struct CameraSection: View {
                 Picker(selection: $manager.selectedDevice, label: Text("")) {
                     Text("None").tag(nil as CaptureDevice?)
                     ForEach(manager.devices, id: \.self) { device in
-                        Text(device.name).tag(device as CaptureDevice?)
+                        Text(displayName(for: device)).tag(device as CaptureDevice?)
                     }
                 }.frame(width: 200)
             }
         }
+    }
+
+    private func displayName(for device: CaptureDevice) -> String {
+        let duplicateNames = manager.devices.filter { $0.name == device.name }
+        guard duplicateNames.count > 1,
+            let uniqueID = device.avDevice?.uniqueID else {
+            return device.name
+        }
+
+        return "\(device.name) (\(uniqueID.suffix(6)))"
     }
 }
 

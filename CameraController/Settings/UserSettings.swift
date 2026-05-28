@@ -12,11 +12,11 @@ import ServiceManagement
 
 final class UserSettings: ObservableObject {
     static let shared = UserSettings()
+    private static let loginHelperIdentifier = "com.itaysoft.CameraController.Helper"
 
     @Published var openAtLogin: Bool {
         didSet {
-            let success = SMLoginItemSetEnabled("com.itaysoft.CameraController.Helper" as CFString, openAtLogin)
-            if success {
+            if setOpenAtLogin(openAtLogin) {
                 UserDefaults.standard.set(openAtLogin, forKey: "login")
             }
         }
@@ -72,5 +72,28 @@ final class UserSettings: ObservableObject {
         ) ?? .small
         checkForUpdatesOnStartup = UserDefaults.standard.bool(forKey: "checkForUpdatesOnStartup")
         mirrorPreview = UserDefaults.standard.bool(forKey: "mirrorPreview")
+    }
+
+    private func setOpenAtLogin(_ isEnabled: Bool) -> Bool {
+        if #available(macOS 13.0, *) {
+            let service = SMAppService.loginItem(identifier: Self.loginHelperIdentifier)
+            do {
+                if isEnabled {
+                    try service.register()
+                } else {
+                    try service.unregister()
+                }
+                return true
+            } catch {
+                print("Unable to update login item: \(error)")
+                return false
+            }
+        } else {
+            let success = SMLoginItemSetEnabled(Self.loginHelperIdentifier as CFString, isEnabled)
+            if !success {
+                print("Unable to update login item")
+            }
+            return success
+        }
     }
 }

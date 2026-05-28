@@ -20,7 +20,12 @@ final class CaptureDevice: Hashable, ObservableObject {
     init(avDevice: AVCaptureDevice) {
         self.avDevice = avDevice
         self.name = avDevice.localizedName
-        self.uvcDevice = try? UVCDevice(device: avDevice)
+        do {
+            self.uvcDevice = try UVCDevice(device: avDevice)
+        } catch {
+            print("Unable to configure UVC device \(avDevice.localizedName): \(error)")
+            self.uvcDevice = nil
+        }
         self.controller = DeviceController(properties: uvcDevice?.properties)
     }
 

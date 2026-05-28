@@ -52,7 +52,8 @@ public final class UVCIntControl: UVCControl {
     }
 
     public func getCurrent() -> Int {
-        return getDataFor(type: .getCurrent, length: uvcSize)
+        _current = getDataFor(type: .getCurrent, length: uvcSize)
+        return _current
     }
 
     func updateMinimum() {

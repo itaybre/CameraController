@@ -17,14 +17,23 @@ final class ProfileManager: ObservableObject {
     private init() {
         if let savedProfiles = UserDefaults.standard.object(forKey: "profiles") as? Data {
             let decoder = JSONDecoder()
-            if let profiles = try? decoder.decode([Profile].self, from: savedProfiles) {
+            do {
+                let profiles = try decoder.decode([Profile].self, from: savedProfiles)
                 self.profiles = profiles
+            } catch {
+                print("Unable to decode saved profiles: \(error)")
             }
         }
     }
 
     func saveProfile(_ name: String, _ settings: DeviceSettings) {
-        let newProfile = Profile(name: name, settings: settings)
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
+            print("Profile name cannot be empty")
+            return
+        }
+
+        let newProfile = Profile(name: trimmedName, settings: settings)
         profiles.append(newProfile)
         saveProfiles()
     }
@@ -43,15 +52,21 @@ final class ProfileManager: ObservableObject {
             return
         }
 
-        let newProfile = Profile(name: profile.name, settings: settings)
+        let newProfile = Profile(id: profile.id,
+                                 name: profile.name,
+                                 isDefault: profile.isDefault,
+                                 settings: settings)
         profiles[index] = newProfile
         saveProfiles()
     }
 
     private func saveProfiles() {
         let encoder = JSONEncoder()
-        if let encoded = try? encoder.encode(profiles) {
+        do {
+            let encoded = try encoder.encode(profiles)
             UserDefaults.standard.set(encoded, forKey: "profiles")
+        } catch {
+            print("Unable to encode profiles: \(error)")
         }
     }
 }
