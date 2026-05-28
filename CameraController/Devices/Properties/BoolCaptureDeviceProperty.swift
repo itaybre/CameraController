@@ -40,9 +40,10 @@ final class BoolCaptureDeviceProperty: ObservableObject {
 
     func reset() {
         control.isEnabled = control.defaultValue
+        internalValue = control.defaultValue
     }
 
     func write() {
-        isEnabled = control.isEnabled
+        control.isEnabled = internalValue
     }
 }

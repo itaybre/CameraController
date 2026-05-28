@@ -22,20 +22,39 @@ final class CameraPreviewInternal: NSView {
 
         super.init(frame: frameRect)
 
-        setupPreviewLayer(captureSession)
+        setup()
 
         Task {
             configureDevice(device)
             // lock configuration to keep device.activeFormat
-           do {
-               try captureDevice?.lockForConfiguration()
+            do {
+                try captureDevice?.lockForConfiguration()
                 captureSession.startRunning()
-               captureDevice?.unlockForConfiguration()
-           } catch {
-                // Handle error.
-           }
+                captureDevice?.unlockForConfiguration()
+            } catch {
+                print("Unable to start camera preview: \(error)")
+            }
         }
 
+        observeWindowNotifications()
+    }
+
+    required init?(coder: NSCoder) {
+        captureSession = AVCaptureSession()
+
+        super.init(coder: coder)
+
+        setup()
+        observeWindowNotifications()
+    }
+
+    private func setup() {
+        wantsLayer = true
+        setupPreviewLayer(captureSession)
+        layer?.addSublayer(previewLayer)
+    }
+
+    private func observeWindowNotifications() {
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(windowClosed),
                                                name: .windowClose,
@@ -57,10 +76,6 @@ final class CameraPreviewInternal: NSView {
         previewLayer.videoGravity = .resizeAspect
     }
 
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -68,7 +83,6 @@ final class CameraPreviewInternal: NSView {
     override func layout() {
         super.layout()
         previewLayer.frame = bounds
-        layer?.addSublayer(previewLayer)
     }
 
     func stopRunning() {
@@ -89,7 +103,7 @@ final class CameraPreviewInternal: NSView {
                     captureSession.startRunning()
                     captureDevice?.unlockForConfiguration()
                 } catch {
-                    // Handle error.
+                    print("Unable to update camera preview: \(error)")
                 }
             }
         }
@@ -108,6 +122,7 @@ final class CameraPreviewInternal: NSView {
         do {
             captureInput = try AVCaptureDeviceInput(device: device)
         } catch {
+            print("Unable to create camera preview input: \(error)")
             return
         }
 

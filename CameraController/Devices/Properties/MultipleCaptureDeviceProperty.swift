@@ -66,19 +66,19 @@ final class MultipleCaptureDeviceProperty: ObservableObject {
         resolution2 = Float(control.resolution2)
         defaultValue1 = Float(control.defaultValue1)
         defaultValue2 = Float(control.defaultValue2)
-        intervalValue1 = Float(control.defaultValue1)
-        intervalValue2 = Float(control.defaultValue2)
-        sliderValue1 = Float(control.current1)
-        sliderValue2 = Float(control.current2)
+        intervalValue1 = Float(control.current1)
+        intervalValue2 = Float(control.current2)
     }
 
     func reset() {
         control.current1 = control.defaultValue1
         control.current2 = control.defaultValue2
+        intervalValue1 = Float(control.defaultValue1)
+        intervalValue2 = Float(control.defaultValue2)
     }
 
     func write() {
-        sliderValue1 = Float(control.current1)
-        sliderValue2 = Float(control.current2)
+        control.current1 = Int(intervalValue1)
+        control.current2 = Int(intervalValue2)
     }
 }

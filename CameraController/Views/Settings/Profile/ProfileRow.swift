@@ -59,7 +59,10 @@ struct ProfileRow: View {
         case .defaultProfile:
             device.controller?.resetDefault()
         case .custom(let profile):
-            device.controller?.set(profile.settings!)
+            guard let settings = profile.settings else {
+                return
+            }
+            device.controller?.set(settings)
         }
     }
 

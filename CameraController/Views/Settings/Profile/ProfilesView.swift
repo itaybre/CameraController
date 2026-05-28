@@ -19,7 +19,7 @@ struct ProfilesView: View {
             VStack(spacing: Constants.Style.controlsSpacing) {
                 ProfileRow(name: "Camera Default", profile: .defaultProfile)
                 Divider()
-                ForEach(profileManager.profiles, id: \.self) { profile in
+                ForEach(profileManager.profiles, id: \.id) { profile in
                     ProfileRow(name: profile.name, profile: .custom(profile))
                 }
             }

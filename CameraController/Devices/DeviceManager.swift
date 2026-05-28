@@ -56,6 +56,9 @@ final class DevicesManager: ObservableObject {
         NotificationCenter.default.removeObserver(self,
                                                   name: NSNotification.Name.AVCaptureDeviceWasConnected,
                                                   object: nil)
+        NotificationCenter.default.removeObserver(self,
+                                                  name: NSNotification.Name.AVCaptureDeviceWasDisconnected,
+                                                  object: nil)
     }
 
     @objc
@@ -74,15 +77,13 @@ final class DevicesManager: ObservableObject {
             return
         }
 
-        let index = devices.firstIndex { (captureDevice) -> Bool in
+        guard let index = devices.firstIndex(where: { (captureDevice) -> Bool in
             captureDevice.avDevice == device
-        }
-
-        guard index != nil else {
+        }) else {
             return
         }
 
-        devices.remove(at: index!)
+        devices.remove(at: index)
 
         if device.uniqueID == selectedDevice?.avDevice?.uniqueID {
             selectedDevice = nil
