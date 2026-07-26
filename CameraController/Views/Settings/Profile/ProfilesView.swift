@@ -10,9 +10,11 @@ import SwiftUI
 
 struct ProfilesView: View {
     @ObservedObject var profileManager = ProfileManager.shared
+    @ObservedObject var scheduleManager = ScheduleManager.shared
 
     @State private var isAddingProfile = false
     @State private var profileName = ""
+    @State private var isAddingSchedule = false
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -38,6 +40,27 @@ struct ProfilesView: View {
                 Button("Cancel", role: .cancel) { }
             } message: {
                 Text("Please enter the name for your profile")
+            }
+
+            Divider()
+                .padding(.vertical, Constants.Style.padding)
+
+            SectionTitle(title: "Scheduler", image: Image(systemName: "clock"))
+                .padding(.bottom, Constants.Style.padding)
+
+            VStack(spacing: Constants.Style.controlsSpacing) {
+                ForEach(scheduleManager.schedules) { schedule in
+                    ScheduleRow(schedule: schedule)
+                }
+            }
+            .padding(.bottom, Constants.Style.topSpacing)
+
+            if isAddingSchedule {
+                AddScheduleView(isPresented: $isAddingSchedule)
+            } else {
+                Button("Add Schedule") {
+                    isAddingSchedule = true
+                }
             }
         }
         .frame(maxHeight: 300)

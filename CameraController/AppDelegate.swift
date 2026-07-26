@@ -27,6 +27,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if UserSettings.shared.checkForUpdatesOnStartup {
             checkForUpdates()
         }
+
+        ScheduleManager.shared.startMonitoring()
     }
 
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {

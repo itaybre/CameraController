@@ -36,6 +36,11 @@ final class ProfileManager: ObservableObject {
 
         profiles.remove(at: index)
         saveProfiles()
+
+        // Remove any schedules that referenced the now-deleted profile.
+        for schedule in ScheduleManager.shared.schedules where schedule.profileName == profile.name {
+            ScheduleManager.shared.deleteSchedule(schedule)
+        }
     }
 
     func updateProfile(_ profile: Profile, _ settings: DeviceSettings) {

@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5260B04CF434FBB8F9B6EB19 /* ScheduleManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1E8C70438C07A5C89CEA12FA /* ScheduleManager.swift */; };
+		8DF1F0A5E3740690D9B5479D /* ProfileSchedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53537156A3A84C528745B837 /* ProfileSchedule.swift */; };
+		91E86D5E1038E95BD4E6BBBE /* AddScheduleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB6BB935E59C34CB0775867 /* AddScheduleView.swift */; };
+		A69A2C43A91A6C545FE793CF /* ScheduleRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC72B813AC5F5D727B8A7A60 /* ScheduleRow.swift */; };
 		F42460312A5A104F009108C2 /* Toggle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42460302A5A104F009108C2 /* Toggle.swift */; };
 		F42460332A5A299B009108C2 /* GenericControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42460322A5A299B009108C2 /* GenericControl.swift */; };
 		F42460352A5A65A0009108C2 /* BrightnessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F42460342A5A65A0009108C2 /* BrightnessView.swift */; };
@@ -156,6 +160,10 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1E8C70438C07A5C89CEA12FA /* ScheduleManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScheduleManager.swift; sourceTree = "<group>"; };
+		53537156A3A84C528745B837 /* ProfileSchedule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ProfileSchedule.swift; sourceTree = "<group>"; };
+		AC72B813AC5F5D727B8A7A60 /* ScheduleRow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ScheduleRow.swift; sourceTree = "<group>"; };
+		BBB6BB935E59C34CB0775867 /* AddScheduleView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AddScheduleView.swift; sourceTree = "<group>"; };
 		F42460302A5A104F009108C2 /* Toggle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Toggle.swift; sourceTree = "<group>"; };
 		F42460322A5A299B009108C2 /* GenericControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericControl.swift; sourceTree = "<group>"; };
 		F42460342A5A65A0009108C2 /* BrightnessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrightnessView.swift; sourceTree = "<group>"; };
@@ -364,6 +372,8 @@
 			children = (
 				F46C257A2A493FBD00FF9100 /* ProfilesView.swift */,
 				F44150722A882D760021ADB5 /* ProfileRow.swift */,
+				AC72B813AC5F5D727B8A7A60 /* ScheduleRow.swift */,
+				BBB6BB935E59C34CB0775867 /* AddScheduleView.swift */,
 			);
 			path = Profile;
 			sourceTree = "<group>";
@@ -395,6 +405,7 @@
 				F42D42D527A0E3D500107DFF /* StatusBarManager.swift */,
 				F42D42D727A0E92100107DFF /* WindowManager.swift */,
 				F469CF4624DD0D9F0092C7F9 /* ProfileManager.swift */,
+				1E8C70438C07A5C89CEA12FA /* ScheduleManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -479,6 +490,7 @@
 				F469CF4424DD0A3E0092C7F9 /* DeviceSettings.swift */,
 				F469CF4824DD0E310092C7F9 /* Profile.swift */,
 				F4E5262E24C7E0AD00125DF9 /* Properties */,
+				53537156A3A84C528745B837 /* ProfileSchedule.swift */,
 			);
 			path = Devices;
 			sourceTree = "<group>";
@@ -943,6 +955,10 @@
 				F424604B2A5A77E6009108C2 /* ZoomView.swift in Sources */,
 				F454D4312A550C5A003F2872 /* SectionTitle.swift in Sources */,
 				F4E5262524C7C2E100125DF9 /* SettingsView.swift in Sources */,
+				8DF1F0A5E3740690D9B5479D /* ProfileSchedule.swift in Sources */,
+				5260B04CF434FBB8F9B6EB19 /* ScheduleManager.swift in Sources */,
+				A69A2C43A91A6C545FE793CF /* ScheduleRow.swift in Sources */,
+				91E86D5E1038E95BD4E6BBBE /* AddScheduleView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
