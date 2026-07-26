@@ -29,8 +29,15 @@ class WindowManager: NSObject {
 
         let contentView = ContentView()
 
+        let hostingController = NSHostingController(rootView: contentView)
+        if #available(macOS 13.0, *) {
+            // Keeps NSPopover's size in sync with SwiftUI's ideal content size,
+            // so the popover grows/shrinks as tabs like Basic/Advanced are expanded.
+            hostingController.sizingOptions = [.preferredContentSize]
+        }
+
         popover = NSPopover()
-        popover?.contentViewController = NSHostingController(rootView: contentView)
+        popover?.contentViewController = hostingController
         popover?.contentSize.width = UserSettings.shared.cameraPreviewSize.getWidth()
         popover?.contentSize.height = 100
         popover?.behavior = .transient
