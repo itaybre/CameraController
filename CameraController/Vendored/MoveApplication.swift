@@ -66,21 +66,21 @@ class LetsMove: NSObject {
 
         // Path of the bundle
         let bundlePath = Bundle.main.bundlePath
-        let bundleNameURL = URL(string: bundlePath)
+        let bundleNameURL = URL(fileURLWithPath: bundlePath)
 
         // Skip if the application is already in some Applications folder
-        guard !isInApplicationsFolder(bundleNameURL!) else { return }
+        guard !isInApplicationsFolder(bundleNameURL) else { return }
 
         // Since we are good to go, get the preferred installation directory.
         let (applicationsDirectory, installToUserApplications) = preferredInstallLocation()
-        let bundleName = bundleNameURL!.lastPathComponent
+        let bundleName = bundleNameURL.lastPathComponent
         let destinationURL = applicationsDirectory!.appendingPathComponent(bundleName)
 
         // Check if we need admin password to write to the Applications directory
         // Check if the destination bundle is already there but not writable
-        let isWritableFileSrc = fileManager.isWritableFile(atPath: applicationsDirectory!.absoluteString)
-        let isFileExists =  fileManager.fileExists(atPath: destinationURL.absoluteString)
-        let isWritableFileDst = fileManager.isWritableFile(atPath: destinationURL.absoluteString)
+        let isWritableFileSrc = fileManager.isWritableFile(atPath: applicationsDirectory!.path)
+        let isFileExists =  fileManager.fileExists(atPath: destinationURL.path)
+        let isWritableFileDst = fileManager.isWritableFile(atPath: destinationURL.path)
 
         let isNeedAuthorization = !isWritableFileSrc || (isFileExists && !isWritableFileDst)
 
@@ -96,7 +96,7 @@ class LetsMove: NSObject {
             print("INFO -- Moving myself to the Applications folder")
 
             if isNeedAuthorization {
-                if !authorizedInstall(srcPath: bundlePath, dstPath: destinationURL.absoluteString) {
+                if !authorizedInstall(srcPath: bundlePath, dstPath: destinationURL.path) {
                     print("ERROR -- Could not copy myself to /Applications with authorization")
                     return
                 }
@@ -113,7 +113,7 @@ class LetsMove: NSObject {
 
             // Relaunch.
             print("relaunch")
-            relaunch(destinationPath: destinationURL.absoluteString)
+            relaunch(destinationPath: destinationURL.path)
             exit(0)
         } else if alert.suppressionButton!.state == .on {
             // Save the alert suppress preference if checked
@@ -162,17 +162,17 @@ class LetsMove: NSObject {
                             _ bundleName: String,
                             _ moveStrings: LetsMove.MoveStrings) -> Bool {
         // If a copy already exists in the Applications folder, put it in the Trash
-        if fileManager.fileExists(atPath: destinationURL.absoluteString) {
+        if fileManager.fileExists(atPath: destinationURL.path) {
 
             // But first, make sure that it's not running
-            if isApplicationAtPathRunning(path: destinationURL.absoluteString) {
+            if isApplicationAtPathRunning(path: destinationURL.path) {
                 // Give the running app focus and terminate myself
                 print("INFO -- Switching to an already running version")
                 Process.launchedProcess(launchPath: "/usr/bin/open", arguments:
-                                            [destinationURL.absoluteString]).waitUntilExit()
+                                            [destinationURL.path]).waitUntilExit()
                 exit(0)
             } else {
-                let path = applicationsDirectory!.appendingPathComponent(bundleName).absoluteString
+                let path = applicationsDirectory!.appendingPathComponent(bundleName).path
                 if !trash(path: path) {
                     let alert = NSAlert()
                     alert.messageText = moveStrings.couldNotMove
@@ -182,8 +182,8 @@ class LetsMove: NSObject {
             }
         }
 
-        if !copyBundle(srcPath: bundlePath, dstPath: destinationURL.absoluteString) {
-            print("Could not copy myself to \(destinationURL.absoluteString)")
+        if !copyBundle(srcPath: bundlePath, dstPath: destinationURL.path) {
+            print("Could not copy myself to \(destinationURL.path)")
             return false
         }
 
@@ -214,7 +214,7 @@ class LetsMove: NSObject {
         if appDir == nil {
             let localLocations = NSSearchPathForDirectoriesInDomains(.applicationDirectory, .localDomainMask, true)
             if let last = localLocations.last {
-                appDir = URL(string: last)
+                appDir = URL(fileURLWithPath: last)
             }
         }
         return (appDir, isUserDir)
