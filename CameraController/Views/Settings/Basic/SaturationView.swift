@@ -19,6 +19,7 @@ struct SaturationView: View {
         GenericControl(value: $saturation.sliderValue,
                        step: saturation.resolution,
                        range: saturation.minimum...saturation.maximum,
+                       defaultValue: saturation.defaultValue,
                        title: "Saturation",
                        imageName: "eyedropper.halffull",
                        auto: nil)

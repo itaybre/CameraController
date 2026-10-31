@@ -19,6 +19,7 @@ struct SharpnessView: View {
         GenericControl(value: $sharpness.sliderValue,
                        step: sharpness.resolution,
                        range: sharpness.minimum...sharpness.maximum,
+                       defaultValue: sharpness.defaultValue,
                        title: "Sharpness",
                        imageName: "triangle.fill",
                        auto: nil)

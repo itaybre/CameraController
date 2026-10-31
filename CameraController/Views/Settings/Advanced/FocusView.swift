@@ -21,6 +21,7 @@ struct FocusView: View {
         GenericControl(value: $focusAbsolute.sliderValue,
                        step: focusAbsolute.resolution,
                        range: focusAbsolute.minimum...focusAbsolute.maximum,
+                       defaultValue: focusAbsolute.defaultValue,
                        title: "Focus",
                        imageName: "camera.aperture",
                        auto: $focusAuto.isEnabled)

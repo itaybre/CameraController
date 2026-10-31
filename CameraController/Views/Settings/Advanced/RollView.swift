@@ -19,6 +19,7 @@ struct RollView: View {
         GenericControl(value: $rollAbsolute.sliderValue,
                        step: rollAbsolute.resolution,
                        range: rollAbsolute.minimum...rollAbsolute.maximum,
+                       defaultValue: rollAbsolute.defaultValue,
                        title: "Roll",
                        imageName: "arrow.counterclockwise",
                        auto: nil)

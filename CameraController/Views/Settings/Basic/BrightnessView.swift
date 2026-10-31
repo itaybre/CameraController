@@ -19,6 +19,7 @@ struct BrightnessView: View {
         GenericControl(value: $brightness.sliderValue,
                        step: brightness.resolution,
                        range: brightness.minimum...brightness.maximum,
+                       defaultValue: brightness.defaultValue,
                        title: "Brightness",
                        imageName: "sun.max.fill",
                        auto: nil)
