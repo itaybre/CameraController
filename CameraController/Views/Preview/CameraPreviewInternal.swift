@@ -1,5 +1,5 @@
 //
-//  CameraPrreviewInternal.swift
+//  CameraPreviewInternal.swift
 //  CameraController
 //
 //  Created by Itay Brenner on 7/21/20.
@@ -15,6 +15,9 @@ final class CameraPreviewInternal: NSView {
     private var captureSession: AVCaptureSession
     private var previewLayer: AVCaptureVideoPreviewLayer!
     private var captureInput: AVCaptureInput?
+    
+    // Serial queue to handle all blocking AVCaptureSession start/stop and device lock operations
+    private let sessionQueue = DispatchQueue(label: "com.itaysoft.CameraController.sessionQueue", qos: .userInitiated)
 
     init(frame frameRect: NSRect, device: AVCaptureDevice?) {
         captureDevice = device
@@ -22,18 +25,28 @@ final class CameraPreviewInternal: NSView {
 
         super.init(frame: frameRect)
 
-        setupPreviewLayer(captureSession)
+        // 1. Enable layer-backing for this NSView
+        self.wantsLayer = true
 
-        Task {
-            configureDevice(device)
-            // lock configuration to keep device.activeFormat
-           do {
-               try captureDevice?.lockForConfiguration()
-                captureSession.startRunning()
-               captureDevice?.unlockForConfiguration()
-           } catch {
+        setupPreviewLayer(captureSession)
+        
+        // 2. Add the sublayer once here instead of during layout
+        if let layer = self.layer {
+            layer.addSublayer(previewLayer)
+        }
+
+        configureDevice(device)
+        
+        let session = captureSession
+        let dev = captureDevice
+        sessionQueue.async {
+            do {
+                try dev?.lockForConfiguration()
+                session.startRunning()
+                dev?.unlockForConfiguration()
+            } catch {
                 // Handle error.
-           }
+            }
         }
 
         NotificationCenter.default.addObserver(self,
@@ -67,27 +80,36 @@ final class CameraPreviewInternal: NSView {
 
     override func layout() {
         super.layout()
+        // 3. Only update the bounds here. Do not add or manipulate layers.
         previewLayer.frame = bounds
-        layer?.addSublayer(previewLayer)
     }
 
     func stopRunning() {
-        if captureSession.isRunning {
-            captureSession.stopRunning()
+        let session = captureSession
+        sessionQueue.async {
+            if session.isRunning {
+                session.stopRunning()
+            }
         }
     }
 
     func updateCamera(_ cam: AVCaptureDevice?) {
         if captureDevice != cam {
-            captureSession.stopRunning()
+            let session = captureSession
+            sessionQueue.async {
+                if session.isRunning {
+                    session.stopRunning()
+                }
+            }
 
-            Task {
-                configureDevice(cam)
-                // lock configuration to keep device.activeFormat
+            configureDevice(cam)
+            
+            let dev = captureDevice
+            sessionQueue.async {
                 do {
-                    try captureDevice?.lockForConfiguration()
-                    captureSession.startRunning()
-                    captureDevice?.unlockForConfiguration()
+                    try dev?.lockForConfiguration()
+                    session.startRunning()
+                    dev?.unlockForConfiguration()
                 } catch {
                     // Handle error.
                 }
@@ -127,8 +149,11 @@ final class CameraPreviewInternal: NSView {
 
     @objc
     func windowOpen() {
-        if !captureSession.isRunning {
-            captureSession.startRunning()
+        let session = captureSession
+        sessionQueue.async {
+            if !session.isRunning {
+                session.startRunning()
+            }
         }
     }
 }
