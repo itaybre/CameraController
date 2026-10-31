@@ -50,12 +50,16 @@ public final class UVCMultipleIntControl: UVCControl {
     }
 
     private func set1(_ val1: Int) -> Bool {
-        let newValue = (val1*3600) << 32 + (_current2*3600)
+        let part1 = (val1 &* 3600) &<< 32
+        let part2 = _current2 &* 3600
+        let newValue = part1 &+ part2
         return setData(value: newValue, length: uvcSize)
     }
 
     private func set2(_ val2: Int) -> Bool {
-        let newValue = (_current1*3600) << 32 + (val2*3600)
+        let part1 = (_current1 &* 3600) &<< 32
+        let part2 = val2 &* 3600
+        let newValue = part1 &+ part2
         return setData(value: newValue, length: uvcSize)
     }
 
@@ -128,17 +132,18 @@ public final class UVCMultipleIntControl: UVCControl {
     }
 }
 
-public extension SignedInteger {
+public extension FixedWidthInteger {
     init(_ bytes: [UInt8]) {
         precondition(bytes.count <= MemoryLayout<Self>.size)
 
-        var value: Int32 = 0
+        var value: Self = 0
 
         for byte in bytes {
-            value <<= 8
-            value |= Int32(byte)
+            // Use masking left-shift &<< to completely prevent arithmetic overflows when shifting
+            value = value &<< 8
+            value |= Self(byte)
         }
 
-        self.init(value)
+        self = value
     }
 }
