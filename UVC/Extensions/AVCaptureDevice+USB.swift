@@ -73,7 +73,11 @@ extension AVCaptureDevice {
             assert( code == kIOReturnSuccess )
         }
         var interfaceRef: UnsafeMutablePointer<UnsafeMutablePointer<IOUSBInterfaceInterface190>>?
-        var configDesc: IOUSBConfigurationDescriptorPtr?
+        // IMPORTANT: GetConfigurationDescriptorPtr returns a pointer whose lifetime is
+        // tied to the device interface. We must parse it BEFORE Release()ing the device
+        // interface — otherwise the descriptor memory is freed and we read garbage on
+        // newer macOS/IOKit. Parse inside the closure into a value type and use that.
+        var descriptor: UVCDescriptor?
         try camera.ioCreatePluginInterfaceFor(service: kIOUSBDeviceUserClientTypeID) {
             let deviceInterface: DeviceInterfacePointer = try $0.getInterface(uuid: kIOUSBDeviceInterfaceID)
             defer { _ = deviceInterface.pointee.pointee.Release(deviceInterface) }
@@ -93,15 +97,20 @@ extension AVCaptureDevice {
                 return
             }
 
+            var configDesc: IOUSBConfigurationDescriptorPtr?
             returnCode = deviceInterface.pointee.pointee.GetConfigurationDescriptorPtr(deviceInterface, 0, &configDesc)
             if returnCode != kIOReturnSuccess {
                 print("unable to get config description for config 0 (index)")
                 return
             }
+
+            // Parse while deviceInterface (and therefore configDesc's backing memory) is still alive.
+            descriptor = configDesc?.proccessDescriptor()
         }
         guard interfaceRef != nil else { throw NSError(domain: #function, code: #line, userInfo: nil) }
-
-        let descriptor = configDesc!.proccessDescriptor()
+        guard let descriptor = descriptor else {
+            throw NSError(domain: #function, code: #line, userInfo: ["reason": "failed to parse UVC descriptor"])
+        }
 
         return USBDevice(interface: interfaceRef.unsafelyUnwrapped,
                          descriptor: descriptor)
