@@ -14,6 +14,7 @@ struct GenericControl: View {
     @Binding var auto: Bool
     @State var step: Float
     @State var range: ClosedRange<Float>
+    let defaultValue: Float
 
     let title: String
     let imageName: String
@@ -22,16 +23,32 @@ struct GenericControl: View {
     init(value: Binding<Float>,
          step: Float,
          range: ClosedRange<Float>,
+         defaultValue: Float,
          title: String,
          imageName: String,
          auto: Binding<Bool>?) {
         self._value = value
         self.step = step
         self.range = range
+        self.defaultValue = defaultValue
         self.title = title
         self.imageName = imageName
         self.hasAuto = auto != nil
         self._auto = auto ?? .constant(false)
+    }
+
+    var sliderValue: Binding<Float> {
+        Binding(get: {
+            value
+        }, set: { newValue in
+            // Moving the slider while in auto switches the control to manual
+            if hasAuto, auto {
+                withAnimation {
+                    auto = false
+                }
+            }
+            value = newValue
+        })
     }
 
     var body: some View {
@@ -54,10 +71,10 @@ struct GenericControl: View {
                     Toggle(isOn: .constant(false))
                         .hidden()
                 }
-                Slider(value: $value,
+                Slider(value: sliderValue,
                           step: step,
-                          sliderRange: range)
-                    .disabled($auto.wrappedValue)
+                          sliderRange: range,
+                          defaultValue: defaultValue)
             }
         }
     }

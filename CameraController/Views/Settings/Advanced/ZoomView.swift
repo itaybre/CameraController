@@ -19,6 +19,7 @@ struct ZoomView: View {
         GenericControl(value: $zoomAbsolute.sliderValue,
                        step: zoomAbsolute.resolution,
                        range: zoomAbsolute.minimum...zoomAbsolute.maximum,
+                       defaultValue: zoomAbsolute.defaultValue,
                        title: "Zoom",
                        imageName: "plus.magnifyingglass",
                        auto: nil)

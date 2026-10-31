@@ -21,6 +21,7 @@ struct HueView: View {
         GenericControl(value: $hue.sliderValue,
                        step: hue.resolution,
                        range: hue.minimum...hue.maximum,
+                       defaultValue: hue.defaultValue,
                        title: "Hue",
                        imageName: "hue",
                        auto: $hueAuto.isEnabled)

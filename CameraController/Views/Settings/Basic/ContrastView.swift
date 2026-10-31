@@ -19,6 +19,7 @@ struct ContrastView: View {
         GenericControl(value: $contrast.sliderValue,
                        step: contrast.resolution,
                        range: contrast.minimum...contrast.maximum,
+                       defaultValue: contrast.defaultValue,
                        title: "Contrast",
                        imageName: "moonphase.first.quarter",
                        auto: nil)

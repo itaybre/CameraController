@@ -7,14 +7,19 @@
 //
 
 import SwiftUI
+import AppKit
 
 struct Slider: View {
     @Binding var value: Float
     @Environment(\.isEnabled) var isEnabled: Bool
 
     @State var lastCoordinateValue: Float = 0.0
+    @State private var isDragging = false
+    @State private var isResetClick = false
+    @State private var lastThumbClick: Date?
     let sliderRange: ClosedRange<Float>
     let step: Float
+    let defaultValue: Float?
     let minTrackColor: Color = Constants.Colors.accentColor
     let maxTrackColor: Color = Constants.Colors.sliderBackground
     let disabledColor: Color = Constants.Colors.disabledSlider
@@ -23,10 +28,12 @@ struct Slider: View {
 
     init(value: Binding<Float>,
          step: Float = 1,
-         sliderRange: ClosedRange<Float> = 0...100) {
+         sliderRange: ClosedRange<Float> = 0...100,
+         defaultValue: Float? = nil) {
         _value = value
         self.step = step
         self.sliderRange = sliderRange
+        self.defaultValue = defaultValue
         self.lastCoordinateValue = lastCoordinateValue
     }
 
@@ -68,6 +75,19 @@ struct Slider: View {
             .gesture(
                 DragGesture(minimumDistance: 0, coordinateSpace: .local)
                     .onChanged { value in
+                        if !isDragging {
+                            isDragging = true
+                            isResetClick = isThumbDoubleClick(at: value.startLocation.x,
+                                                              thumbStart: CGFloat(sliderVal),
+                                                              thumbWidth: thumbWidth)
+                        }
+                        // Double-clicking the thumb resets to the default instead of dragging
+                        if isResetClick {
+                            if let defaultValue = defaultValue {
+                                self.value = defaultValue
+                            }
+                            return
+                        }
                         let percentage = min(
                             max(
                                 Float(value.location.x-thumbWidth/2) / Float(geoReader.size.width-thumbWidth),
@@ -77,10 +97,30 @@ struct Slider: View {
                         let tmpValue = percentageToValueInRange(percentage, sliderRange)
                         self.value = tmpValue - tmpValue.truncatingRemainder(dividingBy: step)
                     }
+                    .onEnded { _ in
+                        isDragging = false
+                    }
             )
             .allowsHitTesting(self.isEnabled)
         }
         .frame(height: 22)
+    }
+
+    private func isThumbDoubleClick(at location: CGFloat, thumbStart: CGFloat, thumbWidth: CGFloat) -> Bool {
+        guard defaultValue != nil,
+              (thumbStart...thumbStart + thumbWidth).contains(location) else {
+            lastThumbClick = nil
+            return false
+        }
+
+        let now = Date()
+        if let lastThumbClick = lastThumbClick,
+           now.timeIntervalSince(lastThumbClick) <= NSEvent.doubleClickInterval {
+            self.lastThumbClick = nil
+            return true
+        }
+        lastThumbClick = now
+        return false
     }
 
     private func percentageToValueInRange(_ percentage: Float, _ range: ClosedRange<Float>) -> Float {

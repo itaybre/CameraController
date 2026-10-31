@@ -25,7 +25,8 @@ struct PanTiltView: View {
                         .hidden()
                     Slider(value: $panTiltAbsolute.sliderValue1,
                               step: panTiltAbsolute.resolution1,
-                              sliderRange: panTiltAbsolute.minimum1...panTiltAbsolute.maximum1)
+                              sliderRange: panTiltAbsolute.minimum1...panTiltAbsolute.maximum1,
+                              defaultValue: panTiltAbsolute.defaultValue1)
                 }
             }
 
@@ -37,7 +38,8 @@ struct PanTiltView: View {
                         .hidden()
                     Slider(value: $panTiltAbsolute.sliderValue2,
                               step: panTiltAbsolute.resolution2,
-                              sliderRange: panTiltAbsolute.minimum2...panTiltAbsolute.maximum2)
+                              sliderRange: panTiltAbsolute.minimum2...panTiltAbsolute.maximum2,
+                              defaultValue: panTiltAbsolute.defaultValue2)
                 }
             }
         }

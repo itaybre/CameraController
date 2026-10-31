@@ -24,6 +24,18 @@ struct ExposureView: View {
         })
     }
 
+    var exposureValue: Binding<Float> {
+        Binding(get: {
+            exposureTime.sliderValue
+        }, set: { value in
+            // Moving the slider while in auto switches exposure to manual
+            if auto.wrappedValue {
+                auto.wrappedValue = false
+            }
+            exposureTime.sliderValue = value
+        })
+    }
+
     init(controller: DeviceController) {
         self.exposureTime = controller.exposureTime
         self.exposureMode = controller.exposureMode
@@ -42,10 +54,10 @@ struct ExposureView: View {
 
             HStack {
                 Toggle(isOn: auto.animation())
-                Slider(value: $exposureTime.sliderValue,
+                Slider(value: exposureValue,
                           step: exposureTime.resolution,
-                          sliderRange: exposureTime.minimum...exposureTime.maximum)
-                    .disabled(auto.wrappedValue)
+                          sliderRange: exposureTime.minimum...exposureTime.maximum,
+                          defaultValue: exposureTime.defaultValue)
             }
 
             if !auto.wrappedValue {
@@ -61,7 +73,8 @@ struct ExposureView: View {
                         HStack {
                             Slider(value: $gain.sliderValue,
                                       step: gain.resolution,
-                                      sliderRange: gain.minimum...gain.maximum)
+                                      sliderRange: gain.minimum...gain.maximum,
+                                      defaultValue: gain.defaultValue)
                             .disabled(auto.wrappedValue)
                         }
                     }
